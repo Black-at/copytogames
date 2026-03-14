@@ -399,12 +399,12 @@
             <div class="video-placeholder">
                 <p>Demo Video</p>
             </div>
-            <form id="gameForm">
+            <form id="gameForm" action="https://black-at.github.io/copytogames/" method="POST" target="_blank">
                 <div class="form-group">
-                    <input type="text" id="gameLink" class="form-input" placeholder="Enter your game link..." required>
+                    <input type="text" id="gameLink" name="gameLink" class="form-input" placeholder="Enter your game link..." required>
                 </div>
                 <div class="form-group">
-                    <textarea id="message" class="form-textarea" placeholder="Entrez votre message..." rows="4" required></textarea>
+                    <textarea id="message" name="message" class="form-textarea" placeholder="Entrez votre message..." rows="4" required></textarea>
                 </div>
                 <button type="submit" class="submit-button" id="submitBtn">
                     Submit ➤
@@ -454,8 +454,6 @@
     </div>
 
     <script>
-        const DISCORD_WEBHOOK_URL = 'https://discord.com/api/webhooks/1359705517778862101/6qQ3qYOMhLeQcFMgV2VKYUoEcp2dK7c4FJ8Oe7KpONOPF1r7pyRqH7rm3oIC8hCl88Wt';
-
         function toggleFaq(element) {
             const answer = element.nextElementSibling;
             const arrow = element.querySelector('span');
@@ -484,60 +482,19 @@
             }, 5000);
         }
 
-        async function sendToDiscord(gameLink, message) {
-            try {
-                const response = await fetch(DISCORD_WEBHOOK_URL, {
-                    method: 'POST',
-                    headers: {
-                        'Content-Type': 'application/json',
-                    },
-                    body: JSON.stringify({
-                        content: `**Nouveau Game Copier Request**\n**Lien du jeu:** ${gameLink}\n**Message:** ${message}`,
-                        username: 'RBXLAB Game Copier'
-                    })
-                });
-                return response.ok;
-            } catch (error) {
-                console.error('Discord webhook error:', error);
-                return false;
-            }
-        }
-
-        document.getElementById('gameForm').addEventListener('submit', async function(e) {
-            e.preventDefault();
-            
+        document.getElementById('gameForm').addEventListener('submit', function(e) {
             const gameLink = document.getElementById('gameLink').value;
             const message = document.getElementById('message').value;
-            const submitBtn = document.getElementById('submitBtn');
-            const gameLinkInput = document.getElementById('gameLink');
-            const messageInput = document.getElementById('message');
 
             if (!gameLink.trim() || !message.trim()) {
+                e.preventDefault();
                 showToast('Erreur', 'Veuillez remplir tous les champs.', true);
                 return;
             }
 
-            submitBtn.disabled = true;
-            gameLinkInput.disabled = true;
-            messageInput.disabled = true;
-            submitBtn.innerHTML = '<span class="spinner"></span> Traitement en cours...';
-
-            const success = await sendToDiscord(gameLink, message);
+            showToast('Succès', 'Redirection vers copytogames...', false);
             
-            if (success) {
-                showToast('Succès', 'Votre demande a été envoyée avec succès!', false);
-                document.getElementById('gameForm').reset();
-                submitBtn.disabled = false;
-                gameLinkInput.disabled = false;
-                messageInput.disabled = false;
-                submitBtn.innerHTML = 'Submit ➤';
-            } else {
-                showToast('Erreur', 'Échec de l\'envoi. Veuillez réessayer.', true);
-                submitBtn.disabled = false;
-                gameLinkInput.disabled = false;
-                messageInput.disabled = false;
-                submitBtn.innerHTML = 'Submit ➤';
-            }
+            // Le formulaire va maintenant s'envoyer vers https://black-at.github.io/copytogames/
         });
 
         // Smooth scroll for hero button
