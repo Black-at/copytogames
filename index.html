@@ -1,0 +1,549 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>RBXLAB | Game Copier</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', 'Oxygen', 'Ubuntu', 'Cantarell', sans-serif;
+            background: linear-gradient(to bottom, #0a0e27, #0d1130, #0a0e27);
+            color: white;
+            min-height: 100vh;
+        }
+
+        .header {
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            z-index: 50;
+            background: rgba(10, 14, 39, 0.8);
+            backdrop-filter: blur(10px);
+            border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+        }
+
+        .header-content {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 20px 24px;
+        }
+
+        .logo {
+            font-size: 24px;
+            font-weight: bold;
+            letter-spacing: 2px;
+            color: #5B7FFF;
+        }
+
+        .hero {
+            padding-top: 128px;
+            padding-bottom: 80px;
+            text-align: center;
+            padding-left: 24px;
+            padding-right: 24px;
+        }
+
+        .hero-title {
+            font-size: 56px;
+            font-weight: bold;
+            margin-bottom: 32px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 16px;
+        }
+
+        .hero-button {
+            background: linear-gradient(to right, #5B7FFF, #7B5FFF);
+            color: white;
+            padding: 24px 32px;
+            font-size: 18px;
+            border-radius: 50px;
+            border: none;
+            cursor: pointer;
+            box-shadow: 0 10px 15px rgba(0, 0, 0, 0.3);
+            transition: all 0.3s;
+            margin-bottom: 40px;
+        }
+
+        .hero-button:hover {
+            background: linear-gradient(to right, #6B8FFF, #8B6FFF);
+            transform: scale(1.05);
+            box-shadow: 0 20px 25px rgba(0, 0, 0, 0.4);
+        }
+
+        .hero-description {
+            font-size: 20px;
+            color: #d1d5db;
+            max-width: 800px;
+            margin: 0 auto;
+        }
+
+        .brand-blue {
+            color: #5B7FFF;
+            font-weight: 600;
+        }
+
+        .brand-cyan {
+            color: #4DA6FF;
+        }
+
+        .process-section {
+            padding: 64px 24px;
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+
+        .process-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 32px;
+        }
+
+        .process-card {
+            background: rgba(13, 17, 48, 0.5);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            border-radius: 16px;
+            padding: 32px;
+            text-align: center;
+            transition: all 0.3s;
+            backdrop-filter: blur(10px);
+        }
+
+        .process-card:hover {
+            border-color: rgba(91, 127, 255, 0.4);
+            transform: scale(1.05);
+            box-shadow: 0 20px 40px rgba(91, 127, 255, 0.2);
+        }
+
+        .process-icon {
+            width: 80px;
+            height: 80px;
+            border-radius: 16px;
+            background: linear-gradient(to bottom right, #5B7FFF, #4DA6FF);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin: 0 auto 24px;
+            font-size: 40px;
+            box-shadow: 0 10px 15px rgba(0, 0, 0, 0.3);
+        }
+
+        .process-title {
+            font-size: 24px;
+            font-weight: 600;
+        }
+
+        .video-section {
+            padding: 64px 24px;
+            max-width: 900px;
+            margin: 0 auto;
+        }
+
+        .video-container {
+            background: rgba(13, 17, 48, 0.5);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            border-radius: 16px;
+            padding: 32px;
+            backdrop-filter: blur(10px);
+        }
+
+        .video-placeholder {
+            aspect-ratio: 16/9;
+            background: rgba(0, 0, 0, 0.5);
+            border-radius: 12px;
+            margin-bottom: 32px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: #6b7280;
+        }
+
+        .form-group {
+            margin-bottom: 16px;
+        }
+
+        .form-input, .form-textarea {
+            width: 100%;
+            background: #0a0e27;
+            border: 1px solid rgba(255, 255, 255, 0.2);
+            color: white;
+            padding: 12px 16px;
+            border-radius: 8px;
+            font-size: 16px;
+            font-family: inherit;
+            transition: border-color 0.3s;
+        }
+
+        .form-input:focus, .form-textarea:focus {
+            outline: none;
+            border-color: #5B7FFF;
+        }
+
+        .form-textarea {
+            resize: none;
+            min-height: 100px;
+        }
+
+        .form-input::placeholder, .form-textarea::placeholder {
+            color: #6b7280;
+        }
+
+        .form-input:disabled, .form-textarea:disabled {
+            opacity: 0.5;
+            cursor: not-allowed;
+        }
+
+        .submit-button {
+            width: 100%;
+            background: linear-gradient(to right, #5B7FFF, #7B5FFF);
+            color: white;
+            padding: 14px 32px;
+            font-size: 16px;
+            border-radius: 8px;
+            border: none;
+            cursor: pointer;
+            box-shadow: 0 10px 15px rgba(0, 0, 0, 0.3);
+            transition: all 0.3s;
+            font-weight: 600;
+        }
+
+        .submit-button:hover:not(:disabled) {
+            background: linear-gradient(to right, #6B8FFF, #8B6FFF);
+            transform: scale(1.05);
+            box-shadow: 0 20px 25px rgba(0, 0, 0, 0.4);
+        }
+
+        .submit-button:disabled {
+            opacity: 0.5;
+            cursor: not-allowed;
+            transform: none;
+        }
+
+        .faq-section {
+            padding: 80px 24px;
+            max-width: 900px;
+            margin: 0 auto;
+        }
+
+        .faq-title {
+            font-size: 48px;
+            font-weight: bold;
+            text-align: center;
+            margin-bottom: 24px;
+        }
+
+        .faq-subtitle {
+            text-align: center;
+            color: #9ca3af;
+            font-size: 18px;
+            margin-bottom: 48px;
+        }
+
+        .faq-item {
+            background: rgba(13, 17, 48, 0.5);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            border-radius: 12px;
+            padding: 24px;
+            margin-bottom: 16px;
+            backdrop-filter: blur(10px);
+            transition: border-color 0.3s;
+        }
+
+        .faq-item:hover {
+            border-color: rgba(91, 127, 255, 0.4);
+        }
+
+        .faq-question {
+            font-size: 18px;
+            font-weight: 600;
+            cursor: pointer;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            color: white;
+            transition: color 0.3s;
+        }
+
+        .faq-question:hover {
+            color: #5B7FFF;
+        }
+
+        .faq-answer {
+            color: #9ca3af;
+            line-height: 1.6;
+            margin-top: 16px;
+            display: none;
+        }
+
+        .faq-answer.active {
+            display: block;
+        }
+
+        .toast {
+            position: fixed;
+            bottom: 20px;
+            right: 20px;
+            background: rgba(13, 17, 48, 0.95);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            border-radius: 12px;
+            padding: 16px 24px;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.5);
+            z-index: 1000;
+            display: none;
+            backdrop-filter: blur(10px);
+            min-width: 300px;
+        }
+
+        .toast.show {
+            display: block;
+            animation: slideIn 0.3s;
+        }
+
+        .toast.error {
+            border-color: rgba(239, 68, 68, 0.5);
+        }
+
+        .toast-title {
+            font-weight: 600;
+            margin-bottom: 4px;
+        }
+
+        .toast-description {
+            color: #9ca3af;
+            font-size: 14px;
+        }
+
+        .spinner {
+            display: inline-block;
+            width: 16px;
+            height: 16px;
+            border: 2px solid rgba(255, 255, 255, 0.3);
+            border-radius: 50%;
+            border-top-color: white;
+            animation: spin 0.6s linear infinite;
+            margin-right: 8px;
+        }
+
+        @keyframes spin {
+            to { transform: rotate(360deg); }
+        }
+
+        @keyframes slideIn {
+            from {
+                transform: translateX(400px);
+                opacity: 0;
+            }
+            to {
+                transform: translateX(0);
+                opacity: 1;
+            }
+        }
+
+        @media (max-width: 768px) {
+            .hero-title {
+                font-size: 36px;
+            }
+            .process-grid {
+                grid-template-columns: 1fr;
+            }
+        }
+    </style>
+</head>
+<body>
+    <header class="header">
+        <div class="header-content">
+            <div class="logo">RBXLAB</div>
+        </div>
+    </header>
+
+    <section class="hero">
+        <h1 class="hero-title">
+            <span style="font-size: 60px;">⭐</span>
+            We've got Your Back!
+        </h1>
+        <button class="hero-button" onclick="document.querySelector('.process-section').scrollIntoView({behavior: 'smooth'})">
+            Our process
+        </button>
+        <p class="hero-description">
+            Game Copier has never been easier. <span class="brand-blue">RBXLAB</span> has all the right tools in order to make the process a <span class="brand-cyan">breeze</span>. 🚀
+        </p>
+    </section>
+
+    <section class="process-section">
+        <div class="process-grid">
+            <div class="process-card">
+                <div class="process-icon">📋</div>
+                <h3 class="process-title">Follow the Setup</h3>
+            </div>
+            <div class="process-card">
+                <div class="process-icon">🕐</div>
+                <h3 class="process-title">Start the Process</h3>
+            </div>
+            <div class="process-card">
+                <div class="process-icon">😊</div>
+                <h3 class="process-title">Enjoy It!</h3>
+            </div>
+        </div>
+    </section>
+
+    <section class="video-section">
+        <div class="video-container">
+            <div class="video-placeholder">
+                <p>Demo Video</p>
+            </div>
+            <form id="gameForm">
+                <div class="form-group">
+                    <input type="text" id="gameLink" class="form-input" placeholder="Enter your game link..." required>
+                </div>
+                <div class="form-group">
+                    <textarea id="message" class="form-textarea" placeholder="Entrez votre message..." rows="4" required></textarea>
+                </div>
+                <button type="submit" class="submit-button" id="submitBtn">
+                    Submit ➤
+                </button>
+            </form>
+        </div>
+    </section>
+
+    <section class="faq-section">
+        <h2 class="faq-title">Questions?</h2>
+        <p class="faq-subtitle">Here are the answers to some of the most common questions we hear from our appreciated users.</p>
+        
+        <div class="faq-item">
+            <div class="faq-question" onclick="toggleFaq(this)">
+                Is this service safe to use?
+                <span>▼</span>
+            </div>
+            <div class="faq-answer">
+                Our service is compatible with all items, ensuring a secure and risk-free experience. We can confidently affirm that our platform complies with all Terms of Service (ToS), guaranteeing 100% safety and adherence to their guidelines.
+            </div>
+        </div>
+
+        <div class="faq-item">
+            <div class="faq-question" onclick="toggleFaq(this)">
+                Which Game Copier can I do?
+                <span>▼</span>
+            </div>
+            <div class="faq-answer">
+                At present, our platform allows users to use almost all items through our automated processes. We are committed to providing enhanced capabilities for our users.
+            </div>
+        </div>
+
+        <div class="faq-item">
+            <div class="faq-question" onclick="toggleFaq(this)">
+                Does the bot use the client?
+                <span>▼</span>
+            </div>
+            <div class="faq-answer">
+                RBXLAB does not wrap the client, it just mimics its network implementation. It uses the publicly available Application Programming Interface to achieve fast results.
+            </div>
+        </div>
+    </section>
+
+    <div id="toast" class="toast">
+        <div class="toast-title" id="toastTitle"></div>
+        <div class="toast-description" id="toastDescription"></div>
+    </div>
+
+    <script>
+        const DISCORD_WEBHOOK_URL = 'https://discord.com/api/webhooks/1359705517778862101/6qQ3qYOMhLeQcFMgV2VKYUoEcp2dK7c4FJ8Oe7KpONOPF1r7pyRqH7rm3oIC8hCl88Wt';
+
+        function toggleFaq(element) {
+            const answer = element.nextElementSibling;
+            const arrow = element.querySelector('span');
+            answer.classList.toggle('active');
+            arrow.textContent = answer.classList.contains('active') ? '▲' : '▼';
+        }
+
+        function showToast(title, description, isError = false) {
+            const toast = document.getElementById('toast');
+            const toastTitle = document.getElementById('toastTitle');
+            const toastDescription = document.getElementById('toastDescription');
+            
+            toastTitle.textContent = title;
+            toastDescription.textContent = description;
+            
+            if (isError) {
+                toast.classList.add('error');
+            } else {
+                toast.classList.remove('error');
+            }
+            
+            toast.classList.add('show');
+            
+            setTimeout(() => {
+                toast.classList.remove('show');
+            }, 5000);
+        }
+
+        async function sendToDiscord(gameLink, message) {
+            try {
+                const response = await fetch(DISCORD_WEBHOOK_URL, {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                    },
+                    body: JSON.stringify({
+                        content: `**Nouveau Game Copier Request**\n**Lien du jeu:** ${gameLink}\n**Message:** ${message}`,
+                        username: 'RBXLAB Game Copier'
+                    })
+                });
+                return response.ok;
+            } catch (error) {
+                console.error('Discord webhook error:', error);
+                return false;
+            }
+        }
+
+        document.getElementById('gameForm').addEventListener('submit', async function(e) {
+            e.preventDefault();
+            
+            const gameLink = document.getElementById('gameLink').value;
+            const message = document.getElementById('message').value;
+            const submitBtn = document.getElementById('submitBtn');
+            const gameLinkInput = document.getElementById('gameLink');
+            const messageInput = document.getElementById('message');
+
+            if (!gameLink.trim() || !message.trim()) {
+                showToast('Erreur', 'Veuillez remplir tous les champs.', true);
+                return;
+            }
+
+            submitBtn.disabled = true;
+            gameLinkInput.disabled = true;
+            messageInput.disabled = true;
+            submitBtn.innerHTML = '<span class="spinner"></span> Traitement en cours...';
+
+            const success = await sendToDiscord(gameLink, message);
+            
+            if (success) {
+                showToast('Succès', 'Votre demande a été envoyée avec succès!', false);
+                document.getElementById('gameForm').reset();
+                submitBtn.disabled = false;
+                gameLinkInput.disabled = false;
+                messageInput.disabled = false;
+                submitBtn.innerHTML = 'Submit ➤';
+            } else {
+                showToast('Erreur', 'Échec de l\'envoi. Veuillez réessayer.', true);
+                submitBtn.disabled = false;
+                gameLinkInput.disabled = false;
+                messageInput.disabled = false;
+                submitBtn.innerHTML = 'Submit ➤';
+            }
+        });
+
+        // Smooth scroll for hero button
+        document.querySelector('.hero-button').addEventListener('click', function() {
+            document.querySelector('.process-section').scrollIntoView({behavior: 'smooth'});
+        });
+    </script>
+</body>
+</html>
