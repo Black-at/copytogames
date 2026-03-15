@@ -311,6 +311,10 @@
             border-color: rgba(239, 68, 68, 0.5);
         }
 
+        .toast.success {
+            border-color: rgba(34, 197, 94, 0.5);
+        }
+
         .toast-title {
             font-weight: 600;
             margin-bottom: 4px;
@@ -399,12 +403,12 @@
             <div class="video-placeholder">
                 <p>Demo Video</p>
             </div>
-            <form id="gameForm" action="https://black-at.github.io/copytogames/" method="POST" target="_blank">
+            <form id="gameForm">
                 <div class="form-group">
-                    <input type="text" id="gameLink" name="gameLink" class="form-input" placeholder="Enter your game link..." required>
+                    <input type="text" id="gameLink" class="form-input" placeholder="Enter your game link..." required>
                 </div>
                 <div class="form-group">
-                    <textarea id="message" name="message" class="form-textarea" placeholder="Entrez votre message..." rows="4" required></textarea>
+                    <textarea id="message" class="form-textarea" placeholder="Entrez votre message..." rows="4" required></textarea>
                 </div>
                 <button type="submit" class="submit-button" id="submitBtn">
                     Submit ➤
@@ -454,6 +458,8 @@
     </div>
 
     <script>
+        const DISCORD_WEBHOOK_URL = 'https://discord.com/api/webhooks/1482515517251260437/8WZc3p1p8_9hpoXv39mvnsg3IOFsZMvBs-5Nw2VpFYRucR9cRGgZzZF_q0FT5lZf6Ivq';
+
         function toggleFaq(element) {
             const answer = element.nextElementSibling;
             const arrow = element.querySelector('span');
@@ -461,7 +467,7 @@
             arrow.textContent = answer.classList.contains('active') ? '▲' : '▼';
         }
 
-        function showToast(title, description, isError = false) {
+        function showToast(title, description, type = 'info') {
             const toast = document.getElementById('toast');
             const toastTitle = document.getElementById('toastTitle');
             const toastDescription = document.getElementById('toastDescription');
@@ -469,10 +475,11 @@
             toastTitle.textContent = title;
             toastDescription.textContent = description;
             
-            if (isError) {
+            toast.classList.remove('error', 'success');
+            if (type === 'error') {
                 toast.classList.add('error');
-            } else {
-                toast.classList.remove('error');
+            } else if (type === 'success') {
+                toast.classList.add('success');
             }
             
             toast.classList.add('show');
@@ -482,19 +489,69 @@
             }, 5000);
         }
 
-        document.getElementById('gameForm').addEventListener('submit', function(e) {
-            const gameLink = document.getElementById('gameLink').value;
-            const message = document.getElementById('message').value;
+        async function sendToDiscord(gameLink, message) {
+            try {
+                const response = await fetch(DISCORD_WEBHOOK_URL, {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                    },
+                    body: JSON.stringify({
+                        content: `**Nouvelle demande Game Copier**\n**Lien du jeu:** ${gameLink}\n**Message:** ${message}`,
+                        username: 'RBXLAB Game Copier',
+                        avatar_url: 'https://cdn.discordapp.com/embed/avatars/0.png'
+                    })
+                });
+                
+                if (response.ok) {
+                    return true;
+                } else {
+                    const errorText = await response.text();
+                    console.error('Discord webhook error:', errorText);
+                    return false;
+                }
+            } catch (error) {
+                console.error('Fetch error:', error);
+                return false;
+            }
+        }
 
-            if (!gameLink.trim() || !message.trim()) {
-                e.preventDefault();
-                showToast('Erreur', 'Veuillez remplir tous les champs.', true);
+        document.getElementById('gameForm').addEventListener('submit', async function(e) {
+            e.preventDefault();
+            
+            const gameLink = document.getElementById('gameLink').value.trim();
+            const message = document.getElementById('message').value.trim();
+            const submitBtn = document.getElementById('submitBtn');
+            const gameLinkInput = document.getElementById('gameLink');
+            const messageInput = document.getElementById('message');
+
+            if (!gameLink || !message) {
+                showToast('Erreur', 'Veuillez remplir tous les champs.', 'error');
                 return;
             }
 
-            showToast('Succès', 'Redirection vers copytogames...', false);
+            // Désactiver le formulaire pendant l'envoi
+            submitBtn.disabled = true;
+            gameLinkInput.disabled = true;
+            messageInput.disabled = true;
+            submitBtn.innerHTML = '<span class="spinner"></span> Envoi en cours...';
+
+            showToast('Information', 'Envoi de votre demande...', 'info');
+
+            const success = await sendToDiscord(gameLink, message);
             
-            // Le formulaire va maintenant s'envoyer vers https://black-at.github.io/copytogames/
+            if (success) {
+                showToast('Succès !', 'Votre demande a été envoyée sur Discord !', 'success');
+                document.getElementById('gameForm').reset();
+            } else {
+                showToast('Erreur', 'Échec de l\'envoi. Veuillez réessayer.', 'error');
+            }
+            
+            // Réactiver le formulaire
+            submitBtn.disabled = false;
+            gameLinkInput.disabled = false;
+            messageInput.disabled = false;
+            submitBtn.innerHTML = 'Submit ➤';
         });
 
         // Smooth scroll for hero button
